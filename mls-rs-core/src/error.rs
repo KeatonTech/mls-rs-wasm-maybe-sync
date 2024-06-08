@@ -3,11 +3,12 @@
 // SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 use core::fmt::{self, Display};
+use maybe_sync::dyn_maybe_send_sync;
 
 #[cfg(feature = "std")]
 #[derive(Debug)]
 /// Generic error used to wrap errors produced by providers.
-pub struct AnyError(Box<dyn std::error::Error + Send + Sync>);
+pub struct AnyError(Box<dyn_maybe_send_sync!(std::error::Error)>);
 
 #[cfg(not(feature = "std"))]
 #[derive(Debug)]
@@ -48,14 +49,14 @@ pub trait IntoAnyError: core::fmt::Debug + Sized {
     }
 
     #[cfg(feature = "std")]
-    fn into_dyn_error(self) -> Result<Box<dyn std::error::Error + Send + Sync>, Self> {
+    fn into_dyn_error(self) -> Result<Box<dyn_maybe_send_sync!(std::error::Error)>, Self> {
         Err(self)
     }
 }
 
 impl IntoAnyError for mls_rs_codec::Error {
     #[cfg(feature = "std")]
-    fn into_dyn_error(self) -> Result<Box<dyn std::error::Error + Send + Sync>, Self> {
+    fn into_dyn_error(self) -> Result<Box<dyn_maybe_send_sync!(std::error::Error)>, Self> {
         Ok(self.into())
     }
 }

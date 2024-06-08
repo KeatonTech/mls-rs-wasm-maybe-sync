@@ -15,8 +15,9 @@ use mls_rs_core::{
     crypto::CryptoProvider, group::GroupStateStorage, identity::IdentityProvider,
     key_package::KeyPackageStorage, psk::PreSharedKeyStorage,
 };
+use maybe_sync::{MaybeSend, MaybeSync};
 
-pub trait ClientConfig: Send + Sync + Clone {
+pub trait ClientConfig: MaybeSend + MaybeSync + Clone {
     type KeyPackageRepository: KeyPackageStorage + Clone;
     type PskStore: PreSharedKeyStorage + Clone;
     type GroupStateStorage: GroupStateStorage + Clone;

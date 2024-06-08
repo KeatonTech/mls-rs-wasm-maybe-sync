@@ -20,3 +20,9 @@ maybe-async = "0.2.10"
 
 [target.'cfg(mls_build_async)'.dependencies]
 async-trait = "0.1.74"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+maybe-sync = {version = "0.1.1", default-features = false}
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+maybe-sync = {version = "0.1.1", features = ["sync"]}

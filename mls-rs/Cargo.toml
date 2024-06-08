@@ -99,6 +99,10 @@ hex = { version = "^0.4.3", default-features = false, features = ["serde", "allo
 wasm-bindgen = { version = "^0.2.79" }
 getrandom = { version = "0.2", features = ["js", "custom"], default-features = false }
 rand_core = { version = "0.6", default-features = false, features = ["alloc"] }
+maybe-sync = {version = "0.1.1", default-features = false}
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+maybe-sync = {version = "0.1.1", features = ["sync"]}
 
 [target.'cfg(target_arch = "wasm32")'.dev-dependencies]
 wasm-bindgen-test = { version = "0.3.26", default-features = false }

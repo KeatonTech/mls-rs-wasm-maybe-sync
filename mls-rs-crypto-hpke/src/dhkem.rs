@@ -8,6 +8,7 @@ use mls_rs_core::{
     crypto::{HpkePublicKey, HpkeSecretKey},
     error::{AnyError, IntoAnyError},
 };
+use maybe_sync::dyn_maybe_send_sync;
 use zeroize::Zeroizing;
 
 use crate::kdf::HpkeKdf;
@@ -31,7 +32,7 @@ pub enum DhKemError {
 
 impl IntoAnyError for DhKemError {
     #[cfg(feature = "std")]
-    fn into_dyn_error(self) -> Result<Box<dyn std::error::Error + Send + Sync>, Self> {
+    fn into_dyn_error(self) -> Result<Box<dyn_maybe_send_sync!(std::error::Error)>, Self> {
         Ok(self.into())
     }
 }

@@ -22,6 +22,7 @@ use crate::{
     kdf::HpkeKdf,
 };
 
+use maybe_sync::dyn_maybe_send_sync;
 use alloc::vec::Vec;
 
 #[derive(Debug)]
@@ -60,7 +61,7 @@ pub enum HpkeError {
 
 impl IntoAnyError for HpkeError {
     #[cfg(feature = "std")]
-    fn into_dyn_error(self) -> Result<Box<dyn std::error::Error + Send + Sync>, Self> {
+    fn into_dyn_error(self) -> Result<Box<dyn_maybe_send_sync!(std::error::Error)>, Self> {
         Ok(self.into())
     }
 }

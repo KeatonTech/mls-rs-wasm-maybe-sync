@@ -8,6 +8,7 @@ use crate::error::IntoAnyError;
 #[cfg(mls_build_async)]
 use alloc::boxed::Box;
 use alloc::vec::Vec;
+use maybe_sync::{MaybeSend, MaybeSync};
 
 /// Generic representation of a group's state.
 #[derive(Clone, PartialEq, Eq)]
@@ -65,8 +66,12 @@ impl EpochRecord {
 ///
 
 #[cfg_attr(not(mls_build_async), maybe_async::must_be_sync)]
-#[cfg_attr(mls_build_async, maybe_async::must_be_async)]
-pub trait GroupStateStorage: Send + Sync {
+#[cfg_attr(all(target_arch = "wasm32", mls_build_async), maybe_async::must_be_async(?Send))]
+#[cfg_attr(
+    all(not(target_arch = "wasm32"), mls_build_async),
+    maybe_async::must_be_async
+)]
+pub trait GroupStateStorage: MaybeSend + MaybeSync {
     type Error: IntoAnyError;
 
     /// Fetch a group state from storage.

@@ -34,6 +34,7 @@ use core::fmt::{self, Debug};
 use mls_rs_core::{
     identity::IdentityProvider, protocol_version::ProtocolVersion, psk::PreSharedKeyStorage,
 };
+use maybe_sync::{MaybeSend, MaybeSync};
 
 #[cfg(feature = "by_ref_proposal")]
 use super::proposal_ref::ProposalRef;
@@ -428,7 +429,7 @@ pub(crate) enum EventOrContent<E> {
     all(not(target_arch = "wasm32"), mls_build_async),
     maybe_async::must_be_async
 )]
-pub(crate) trait MessageProcessor: Send + Sync {
+pub(crate) trait MessageProcessor: MaybeSend + MaybeSync {
     type OutputType: TryFrom<ApplicationMessageDescription, Error = MlsError>
         + From<CommitMessageDescription>
         + From<ProposalMessageDescription>

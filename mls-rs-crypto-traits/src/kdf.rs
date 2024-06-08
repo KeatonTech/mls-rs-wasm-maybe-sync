@@ -6,6 +6,7 @@
 use mockall::automock;
 
 use alloc::vec::Vec;
+use maybe_sync::{MaybeSend, MaybeSync};
 use mls_rs_core::{crypto::CipherSuite, error::IntoAnyError};
 
 /// A trait that provides the required KDF functions
@@ -16,8 +17,8 @@ use mls_rs_core::{crypto::CipherSuite, error::IntoAnyError};
     maybe_async::must_be_async
 )]
 #[cfg_attr(feature = "mock", automock(type Error = crate::mock::TestError;))]
-pub trait KdfType: Send + Sync {
-    type Error: IntoAnyError + Send + Sync;
+pub trait KdfType: MaybeSend + MaybeSync {
+    type Error: IntoAnyError + MaybeSend + MaybeSync;
 
     /// KDF Id, as specified in RFC 9180, Section 5.1 and Table 3.
     fn kdf_id(&self) -> u16;

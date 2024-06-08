@@ -7,6 +7,7 @@ use mls_rs_core::{
     error::IntoAnyError,
 };
 
+use maybe_sync::{MaybeSend, MaybeSync};
 use alloc::vec::Vec;
 
 #[cfg(feature = "mock")]
@@ -20,8 +21,8 @@ use mockall::automock;
     maybe_async::must_be_async
 )]
 #[cfg_attr(feature = "mock", automock(type Error = crate::mock::TestError;))]
-pub trait KemType: Send + Sync {
-    type Error: IntoAnyError + Send + Sync;
+pub trait KemType: MaybeSend + MaybeSync {
+    type Error: IntoAnyError + MaybeSend + MaybeSync;
 
     /// KEM Id, as specified in RFC 9180, Section 5.1 and Table 2.
     fn kem_id(&self) -> u16;

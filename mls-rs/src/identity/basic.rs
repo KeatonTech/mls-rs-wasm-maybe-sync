@@ -7,6 +7,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 pub use mls_rs_core::identity::BasicCredential;
 use mls_rs_core::{error::IntoAnyError, extension::ExtensionList, identity::IdentityProvider};
+use maybe_sync::dyn_maybe_send_sync;
 
 #[derive(Debug)]
 #[cfg_attr(feature = "std", derive(thiserror::Error))]
@@ -17,7 +18,7 @@ pub struct BasicIdentityProviderError(CredentialType);
 
 impl IntoAnyError for BasicIdentityProviderError {
     #[cfg(feature = "std")]
-    fn into_dyn_error(self) -> Result<Box<dyn std::error::Error + Send + Sync>, Self> {
+    fn into_dyn_error(self) -> Result<Box<dyn_maybe_send_sync!(std::error::Error)>, Self> {
         Ok(self.into())
     }
 }

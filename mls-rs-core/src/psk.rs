@@ -12,6 +12,7 @@ use core::{
 };
 use mls_rs_codec::{MlsDecode, MlsEncode, MlsSize};
 use zeroize::Zeroizing;
+use maybe_sync::{MaybeSend, MaybeSync};
 
 #[derive(Clone, PartialEq, Eq, MlsSize, MlsEncode, MlsDecode)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -119,8 +120,12 @@ impl From<Vec<u8>> for ExternalPskId {
 
 /// Storage trait to maintain a set of pre-shared key values.
 #[cfg_attr(not(mls_build_async), maybe_async::must_be_sync)]
-#[cfg_attr(mls_build_async, maybe_async::must_be_async)]
-pub trait PreSharedKeyStorage: Send + Sync {
+#[cfg_attr(all(target_arch = "wasm32", mls_build_async), maybe_async::must_be_async(?Send))]
+#[cfg_attr(
+    all(not(target_arch = "wasm32"), mls_build_async),
+    maybe_async::must_be_async
+)]
+pub trait PreSharedKeyStorage: MaybeSend + MaybeSync {
     /// Error type that the underlying storage mechanism returns on internal
     /// failure.
     type Error: IntoAnyError;

@@ -8,6 +8,7 @@ use mls_rs_core::{
 };
 
 use alloc::vec::Vec;
+use maybe_sync::{MaybeSend, MaybeSync}
 
 #[cfg(feature = "mock")]
 use mockall::automock;
@@ -20,8 +21,8 @@ use mockall::automock;
     all(not(target_arch = "wasm32"), mls_build_async),
     maybe_async::must_be_async
 )]
-pub trait DhType: Send + Sync {
-    type Error: IntoAnyError + Send + Sync;
+pub trait DhType: MaybeSend + MaybeSync {
+    type Error: IntoAnyError + MaybeSend + MaybeSync;
 
     async fn dh(
         &self,

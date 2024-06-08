@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 use mls_rs_core::{error::AnyError, identity::CredentialType};
+use maybe_sync::dyn_maybe_send_sync;
 
 #[derive(Debug)]
 #[cfg_attr(feature = "std", derive(thiserror::Error))]
@@ -34,7 +35,7 @@ pub enum X509IdentityError {
 
 impl mls_rs_core::error::IntoAnyError for X509IdentityError {
     #[cfg(feature = "std")]
-    fn into_dyn_error(self) -> Result<Box<dyn std::error::Error + Send + Sync>, Self> {
+    fn into_dyn_error(self) -> Result<Box<dyn_maybe_send_sync!(std::error::Error)>, Self> {
         Ok(self.into())
     }
 }

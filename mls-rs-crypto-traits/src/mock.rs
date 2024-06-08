@@ -4,6 +4,8 @@
 
 pub use crate::{aead::MockAeadType, dh::MockDhType, kdf::MockKdfType, kem::MockKemType};
 
+use maybe_sync::dyn_maybe_send_sync;
+
 #[derive(Debug)]
 pub struct TestError {}
 
@@ -16,7 +18,7 @@ impl std::fmt::Display for TestError {
 }
 
 impl mls_rs_core::error::IntoAnyError for TestError {
-    fn into_dyn_error(self) -> Result<Box<dyn std::error::Error + Send + Sync>, Self> {
+    fn into_dyn_error(self) -> Result<Box<dyn_maybe_send_sync!(std::error::Error)>, Self> {
         Ok(self.into())
     }
 }

@@ -25,6 +25,7 @@ use crate::{
     tree_kem::{Capabilities, Lifetime},
     Sealed,
 };
+use maybe_sync::{MaybeSend, MaybeSync};
 
 #[cfg(feature = "std")]
 use crate::time::MlsTime;
@@ -787,7 +788,7 @@ where
 /// Helper trait to allow consuming crates to easily write a client type as `Client<impl MlsConfig>`
 ///
 /// It is not meant to be implemented by consuming crates. `T: MlsConfig` implies `T: ClientConfig`.
-pub trait MlsConfig: Clone + Send + Sync + Sealed {
+pub trait MlsConfig: Clone + MaybeSend + MaybeSync + Sealed {
     #[doc(hidden)]
     type Output: ClientConfig;
 

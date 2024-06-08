@@ -7,6 +7,7 @@ use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt::{self, Debug};
 use mls_rs_codec::{MlsDecode, MlsEncode, MlsSize};
+use maybe_sync::{MaybeSend, MaybeSync};
 
 use crate::{crypto::HpkeSecretKey, error::IntoAnyError};
 
@@ -54,8 +55,12 @@ impl KeyPackageData {
 
 /// Storage trait that maintains key package secrets.
 #[cfg_attr(not(mls_build_async), maybe_async::must_be_sync)]
-#[cfg_attr(mls_build_async, maybe_async::must_be_async)]
-pub trait KeyPackageStorage: Send + Sync {
+#[cfg_attr(all(target_arch = "wasm32", mls_build_async), maybe_async::must_be_async(?Send))]
+#[cfg_attr(
+    all(not(target_arch = "wasm32"), mls_build_async),
+    maybe_async::must_be_async
+)]
+pub trait KeyPackageStorage: MaybeSend + MaybeSync {
     /// Error type that the underlying storage mechanism returns on internal
     /// failure.
     type Error: IntoAnyError;

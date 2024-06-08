@@ -26,6 +26,7 @@ use mls_rs_core::extension::{ExtensionError, ExtensionList, ExtensionType};
 use mls_rs_core::group::{GroupStateStorage, ProposalType};
 use mls_rs_core::identity::CredentialType;
 use mls_rs_core::key_package::KeyPackageStorage;
+use maybe_sync::dyn_maybe_send_sync;
 
 use crate::group::external_commit::ExternalCommitBuilder;
 
@@ -339,7 +340,7 @@ pub enum MlsError {
 
 impl IntoAnyError for MlsError {
     #[cfg(feature = "std")]
-    fn into_dyn_error(self) -> Result<Box<dyn std::error::Error + Send + Sync>, Self> {
+    fn into_dyn_error(self) -> Result<Box<dyn_maybe_send_sync!(std::error::Error)>, Self> {
         Ok(self.into())
     }
 }

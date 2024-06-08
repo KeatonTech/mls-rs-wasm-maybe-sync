@@ -63,6 +63,7 @@ impl AsRef<[u8]> for DerCertificateRequest {
 pub(crate) mod test_utils {
 
     use alloc::vec;
+    use maybe_sync::dyn_maybe_send_sync;
     use mls_rs_core::{crypto::SignaturePublicKey, error::IntoAnyError, identity::SigningIdentity};
     use rand::{thread_rng, Rng};
 
@@ -73,7 +74,7 @@ pub(crate) mod test_utils {
     pub struct TestError;
 
     impl IntoAnyError for TestError {
-        fn into_dyn_error(self) -> Result<Box<dyn std::error::Error + Send + Sync>, Self> {
+        fn into_dyn_error(self) -> Result<Box<dyn_maybe_send_sync!(std::error::Error)>, Self> {
             Ok(self.into())
         }
     }

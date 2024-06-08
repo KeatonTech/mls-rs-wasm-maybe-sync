@@ -10,6 +10,7 @@ use core::{
 use crate::error::{AnyError, IntoAnyError};
 use alloc::vec::Vec;
 use mls_rs_codec::{MlsDecode, MlsEncode, MlsSize};
+use maybe_sync::dyn_maybe_send_sync;
 
 mod list;
 
@@ -88,7 +89,7 @@ pub enum ExtensionError {
 
 impl IntoAnyError for ExtensionError {
     #[cfg(feature = "std")]
-    fn into_dyn_error(self) -> Result<Box<dyn std::error::Error + Send + Sync>, Self> {
+    fn into_dyn_error(self) -> Result<Box<dyn_maybe_send_sync!(std::error::Error)>, Self> {
         Ok(self.into())
     }
 }
