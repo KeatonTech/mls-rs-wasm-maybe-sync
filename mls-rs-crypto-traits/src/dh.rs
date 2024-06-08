@@ -8,7 +8,7 @@ use mls_rs_core::{
 };
 
 use alloc::vec::Vec;
-use maybe_sync::{MaybeSend, MaybeSync}
+use maybe_sync::{MaybeSend, MaybeSync};
 
 #[cfg(feature = "mock")]
 use mockall::automock;
